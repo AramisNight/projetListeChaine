@@ -12,7 +12,7 @@ typedef struct passeport_s
 typedef struct maillon_s
 {
   int age;
-
+  int identification;
   char* nom;
 
   passeport_t* pass;
@@ -41,6 +41,7 @@ void supprimer_nieme_maillon_a_la_liste(ensemble_t* liste,int pos);
 int valeur_du_nieme_maillon(ensemble_t* liste, int nm_maillon);
 void affichage_maillon(maillon_t* m);
 void affichage_liste(ensemble_t* liste);
+void lecture_collection();
 int main()
 {
 
@@ -58,7 +59,22 @@ int main()
   return EXIT_SUCCESS;
 
 }
-
+void lecture_collection(){
+  FILE* fichier = NULL;
+  fichier = fopen("ident.txt","r");
+  int caractereActuel = 0;
+  if(fichier !=NULL){
+    do {
+      caractereActuel = fgetc(fichier);
+      printf("%c",caractereActuel);
+    } while(caractereActuel !=EOF);
+    fclose(fichier);
+  }
+  else{
+    printf("Erreur dans l'ouverture du fichier \n");
+    exit(EXIT_FAILURE);
+  }
+}
 ensemble_t* creer_liste(maillon_t* m){
   ensemble_t* liste;
   liste = (ensemble_t *)malloc(sizeof(ensemble_t));
