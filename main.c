@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 typedef struct passeport_s
 {
@@ -27,6 +28,7 @@ typedef struct ensemble_s
 }ensemble_t;
 
 ensemble_t* creer_liste(maillon_t* m);
+ensemble_t* creer_liste_null();
 maillon_t* creer_maillon(int a);
 passeport_t* creer_passeport();
 void ajouter_valeur_maillon_utilisateur(maillon_t* m);
@@ -41,39 +43,96 @@ void supprimer_nieme_maillon_a_la_liste(ensemble_t* liste,int pos);
 int valeur_du_nieme_maillon(ensemble_t* liste, int nm_maillon);
 void affichage_maillon(maillon_t* m);
 void affichage_liste(ensemble_t* liste);
-void lecture_collection();
+ensemble_t* lecture_collection();
 int main()
 {
-
-  maillon_t* nouveau = creer_maillon(1);
-  ensemble_t* liste = creer_liste(nouveau);
-
-  maillon_t* deuxieme = creer_maillon(1);
-  deuxieme->age = 2;
-  ajouter_append_maillon_a_la_liste(liste,deuxieme);
-
-
-
-//liste->premierElement->vdd
+  ensemble_t* liste = lecture_collection();
   affichage_liste(liste);
   return EXIT_SUCCESS;
 
 }
-void lecture_collection(){
+ensemble_t* lecture_collection(){
+  ensemble_t* maListe = creer_liste_null();
+  maillon_t* temporaire = creer_maillon(1);
   FILE* fichier = NULL;
-  fichier = fopen("ident.txt","r");
+  fichier = fopen("ident.txt","rw+");
   int caractereActuel = 0;
+  int compteurVirgule = 0;
+  char tempo[100];
+  char prevChar='\n';
+  int indiceTempo = 0;
   if(fichier !=NULL){
-    do {
+  while(caractereActuel !=EOF){
       caractereActuel = fgetc(fichier);
-      printf("%c",caractereActuel);
-    } while(caractereActuel !=EOF);
+      if(caractereActuel != ','){
+        printf("\n%d",compteurVirgule);
+        if(compteurVirgule == 0 || compteurVirgule == 2){
+          tempo[indiceTempo] = caractereActuel;
+          indiceTempo++;
+        }
+        prevChar = caractereActuel;
+
+      }
+      else{
+        //alors on arrive a un changement de ligne ou caracteristique du mec
+        if(compteurVirgule == 0){
+          strncpy(temporaire->pass->planete, tempo,indiceTempo);
+          temporaire->pass->planete[indiceTempo] = '\0';
+          memset(tempo, 0, 100);
+          indiceTempo=0;
+          printf("Passage a 0 de la virgule \n");
+
+        }else if(compteurVirgule == 1){
+          printf("Passage a 1 de la virgule \n");
+          if(prevChar =='n'){
+            temporaire->pass->jedi = 0;
+          }
+          else{
+            temporaire->pass->jedi = 1;
+          }
+        }else if(compteurVirgule == 2){
+          printf("Passage a 2 de la virgule \n");
+          temporaire->nom = (char*)malloc(sizeof(indiceTempo));
+          temporaire->nom = tempo;
+          memset(tempo, 0, 100);
+          indiceTempo=0;
+        }else if (compteurVirgule == 3){
+          //Tricks
+          printf("Passage a 3 de la virgule \n");
+          temporaire->age = prevChar - '0';
+        }else if (compteurVirgule == 4){
+          //Tricks
+          printf("Passage a 4 de la virgule \n");
+          temporaire->identification = prevChar -'0';
+        }
+        if(caractereActuel == ','){
+
+          printf("Je vois  de la virgule \n");
+            compteurVirgule = compteurVirgule +1;
+        }
+        if(caractereActuel == '\n'){
+          compteurVirgule = 0;
+        //  maillon_t* addToList = creer_maillon(1);
+        //  addToList = temporaire;
+        //  ajouter_prepend_maillon_a_la_liste(maListe,addToList);
+        }
+
+      }
+    }
     fclose(fichier);
   }
   else{
     printf("Erreur dans l'ouverture du fichier \n");
     exit(EXIT_FAILURE);
   }
+  return maListe;
+}
+
+ensemble_t* creer_liste_null(){
+  ensemble_t* liste;
+  liste = (ensemble_t *)malloc(sizeof(ensemble_t));
+  liste->premierElement = NULL;
+  return liste;
 }
 ensemble_t* creer_liste(maillon_t* m){
   ensemble_t* liste;
