@@ -228,3 +228,30 @@ void affichage_liste(ensemble_t* liste){
   }
     affichage_maillon(temporaire);
 }
+
+
+void ecriture_fichier(liste_t* m)
+{
+    maillon_t* temporaire = m->premierElement;
+
+    FILE* fichier = NULL;
+    fichier = fopen("ident.txt","w");
+
+    if(fichier!=NULL)
+    {
+        while(temporaire->vdd !=NULL)
+            {
+                fprintf(fichier,"%s,%d,%s,%d,%d\n",temporaire->pass->planete, temporaire->pass->jedi, temporaire->nom, temporaire->age, temporaire->identification);
+
+                temporaire = temporaire->vdd;
+            }
+
+        fclose(fichier);
+    }
+    else
+    {
+        printf("Erreur d ouverture du fichier\n");
+        exit(EXIT_FAILURE);
+    }
+
+}

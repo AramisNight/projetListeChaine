@@ -60,4 +60,6 @@ void affichage_liste(ensemble_t* liste);
 
 ensemble_t* lecture_collection();
 
+void ecriture_fichier(liste_t* m);
+
 #endif // MAIN_H_INCLUDED
