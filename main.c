@@ -9,29 +9,50 @@ int main()
 {
   ensemble_t* liste = lecture_collection();
   affichage_liste(liste);
+  ecriture_fichier(liste);
   return EXIT_SUCCESS;
 
 }
 ensemble_t* lecture_collection(){
+  int ch;
+  FILE *fp;
+  fp = fopen("ident.txt", "r+");
   ensemble_t* maListe = creer_liste_null();
   maillon_t* temporaire = creer_maillon(1);
-  FILE* fichier = NULL;
-  fichier = fopen("ident.txt","rw+");
   int caractereActuel = 0;
   int compteurVirgule = 0;
-  char tempo[100];
-  char prevChar='\n';
+  char tempo[100]= {0};
+  char prevChar=' ';
   int indiceTempo = 0;
-  if(fichier !=NULL){
-  while(caractereActuel !=EOF){
-      caractereActuel = fgetc(fichier);
-      if(caractereActuel != ','){
-        printf("\n%d",compteurVirgule);
-        if(compteurVirgule == 0 || compteurVirgule == 2){
-          tempo[indiceTempo] = caractereActuel;
-          indiceTempo++;
-        }
-        prevChar = caractereActuel;
+  if(fp == NULL)
+  {
+      printf("Error opening file\n");
+      exit(EXIT_FAILURE);
+  }
+
+  printf("Reading contents of myfile.txt: \n\n");
+
+  while( (ch=fgetc(fp)) != EOF )
+  {
+      if(ch != ',' && ch != '\n'){
+          tempo[indiceTempo] = ch;
+          indiceTempo = indiceTempo + 1;
+          prevChar = ch;
+      }
+      else if(ch == '\n'){
+          compteurVirgule = 0;
+          char identific[10] ={0};
+          strncpy(identific, tempo,indiceTempo);
+          identific[indiceTempo] = '\0';
+          memset(tempo, 0, 100);
+          indiceTempo=0;
+          int i = atoi(identific);
+          temporaire->identification = i;
+        //  printf("Fin de ligne : %d",temporaire->identification);
+          maillon_t* addToList = creer_maillon(1);
+          copier_maillon(addToList,temporaire);
+        //  affichage_maillon(addToList);
+          ajouter_prepend_maillon_a_la_liste(maListe,addToList);
 
       }
       else{
@@ -41,52 +62,65 @@ ensemble_t* lecture_collection(){
           temporaire->pass->planete[indiceTempo] = '\0';
           memset(tempo, 0, 100);
           indiceTempo=0;
-          printf("Passage a 0 de la virgule \n");
+        //  printf("Passage a 0 de la virgule : %s \n",temporaire->pass->planete);
 
-        }else if(compteurVirgule == 1){
-          printf("Passage a 1 de la virgule \n");
+
+        }
+        if(compteurVirgule == 1){
+
           if(prevChar =='n'){
             temporaire->pass->jedi = 0;
           }
           else{
             temporaire->pass->jedi = 1;
           }
-        }else if(compteurVirgule == 2){
-          printf("Passage a 2 de la virgule \n");
+          indiceTempo = 0;
+    //        printf("Passage a 1 de la virgule  : %d \n",temporaire->pass->jedi);
+        }
+        if(compteurVirgule == 2){
+
           temporaire->nom = (char*)malloc(sizeof(indiceTempo));
-          temporaire->nom = tempo;
+          strncpy(temporaire->nom, tempo,indiceTempo);
+          temporaire->nom[indiceTempo] = '\0';
           memset(tempo, 0, 100);
           indiceTempo=0;
-        }else if (compteurVirgule == 3){
-          //Tricks
-          printf("Passage a 3 de la virgule \n");
-          temporaire->age = prevChar - '0';
-        }else if (compteurVirgule == 4){
-          //Tricks
-          printf("Passage a 4 de la virgule \n");
-          temporaire->identification = prevChar -'0';
-        }
-        if(caractereActuel == ','){
+  //        printf("Passage a 2 de la virgule : %s \n",temporaire->nom);
 
-          printf("Je vois  de la virgule \n");
-            compteurVirgule = compteurVirgule +1;
         }
-        if(caractereActuel == '\n'){
-          compteurVirgule = 0;
-        //  maillon_t* addToList = creer_maillon(1);
-        //  addToList = temporaire;
-        //  ajouter_prepend_maillon_a_la_liste(maListe,addToList);
-        }
+        if(compteurVirgule == 3){
+          //Tricks
+          //Tricks
+         char age[10] ={0};
+         strncpy(age, tempo,indiceTempo);
+         age[indiceTempo] = '\0';
+         memset(tempo, 0, 100);
+         indiceTempo=0;
+         int i = atoi(age);
+         temporaire->age = i;
+  //       printf("Passage a 3 de la virgule  %d \n", temporaire->age);
 
+        }
+        if(ch == ','){
+
+//printf("Je vois  de la virgule \n");
+         compteurVirgule = compteurVirgule +1;
+        }
       }
-    }
-    fclose(fichier);
+
   }
-  else{
-    printf("Erreur dans l'ouverture du fichier \n");
-    exit(EXIT_FAILURE);
-  }
+  fclose(fp);
   return maListe;
+}
+void copier_maillon(maillon_t* addToList,maillon_t* temporaire){
+  size_t destination_size = sizeof(temporaire->nom);
+  addToList->nom = (char*)malloc(sizeof(destination_size));
+  strncpy(addToList->nom,temporaire->nom, destination_size);
+  addToList->nom[destination_size - 1] = '\0';
+  addToList->age = temporaire->age;
+  addToList->identification = temporaire->identification;
+  addToList->pass = creer_passeport();
+  strcpy(addToList->pass->planete,temporaire->pass->planete);
+  addToList->pass->jedi = temporaire->pass->jedi;
 }
 
 ensemble_t* creer_liste_null(){
@@ -207,11 +241,11 @@ void affichage_maillon(maillon_t* m){
   printf("| %s |\n",m->pass->planete);
   if(m->pass->jedi==true)
   {
-      printf("| Il/elle a un sabre laser |\n");
+      printf("| Il/elle est un jedi |\n");
   }
   else
   {
-      printf("| Il/elle n a pas de sabre laser |\n");
+      printf("| Il/elle n'est pas un jedi |\n");
   }
 
 
@@ -230,19 +264,26 @@ void affichage_liste(ensemble_t* liste){
 }
 
 
-void ecriture_fichier(liste_t* m)
+void ecriture_fichier(ensemble_t* m)
 {
     maillon_t* temporaire = m->premierElement;
 
     FILE* fichier = NULL;
-    fichier = fopen("ident.txt","w");
+    fichier = fopen("ident.txt","rw+");
 
     if(fichier!=NULL)
     {
         while(temporaire->vdd !=NULL)
             {
-                fprintf(fichier,"%s,%d,%s,%d,%d\n",temporaire->pass->planete, temporaire->pass->jedi, temporaire->nom, temporaire->age, temporaire->identification);
+                if(temporaire->pass->jedi == 1){
+                  fprintf(fichier,"%s,o,%s,%d,%d\n",temporaire->pass->planete, temporaire->nom, temporaire->age, temporaire->identification);
 
+                }
+                else
+                {
+                  fprintf(fichier,"%s,n,%s,%d,%d\n",temporaire->pass->planete, temporaire->nom, temporaire->age, temporaire->identification);
+
+                }
                 temporaire = temporaire->vdd;
             }
 

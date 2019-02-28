@@ -45,7 +45,7 @@ void ajouter_append_maillon_a_la_liste(ensemble_t* liste, maillon_t* m);
 void ajouter_prepend_maillon_a_la_liste(ensemble_t* liste, maillon_t* m);
 void ajouter_nieme_maillon_a_la_liste(ensemble_t* liste,int pos, maillon_t* m);
 
-
+void copier_maillon(maillon_t* addToList,maillon_t* temporaire);
 void supprimer_append_maillon_a_la_liste(ensemble_t* liste);
 void supprimer_prepend_maillon_a_la_liste(ensemble_t* liste);
 void supprimer_nieme_maillon_a_la_liste(ensemble_t* liste,int pos);
@@ -60,6 +60,6 @@ void affichage_liste(ensemble_t* liste);
 
 ensemble_t* lecture_collection();
 
-void ecriture_fichier(liste_t* m);
+void ecriture_fichier(ensemble_t* m);
 
 #endif // MAIN_H_INCLUDED
