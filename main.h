@@ -15,7 +15,6 @@ typedef struct maillon_s
   char* nom;
 
   passeport_t* pass;
-
   struct maillon_s* vdd;
 
 }maillon_t;
@@ -51,7 +50,7 @@ void supprimer_maillon_par_id(ensemble_t* liste,maillon_t* m);
 void ajout_fiche(ensemble_t* liste);
 void ajouter_valeur_maillon_utilisateur(maillon_t* m);
 void selection_modification_maillon_utilisateur(ensemble_t* liste);
-
+void supprimer_maillon_tableau_id(ensemble_t* liste,int* id,int nbElements);
 
 maillon_t* rechercher_premier_maillon_par_valeur(ensemble_t* liste,int a);
 
@@ -76,5 +75,6 @@ void affichage_liste(ensemble_t* liste);
 ensemble_t* lecture_collection();
 
 void ecriture_fichier(ensemble_t* m);
-
+void select_fiches(ensemble_t* liste);
+void affichage_maillons_par_id(ensemble_t* liste, int* id,int nbElements);
 #endif // MAIN_H_INCLUDED

@@ -22,7 +22,8 @@ void menu(ensemble_t* liste){
     printf("3 - Affichage Spécifique \n");
     printf("4 - Ajout d'une fiche \n");
     printf("5 - Suppr d'une fiche \n");
-    printf("6 - Quitter \n");
+    printf("6 - Selection de fiches \n");
+    printf("7 - Quitter \n");
     scanf("%d",&rep);
     if(rep == 1){
       affichage_liste(liste);
@@ -34,7 +35,9 @@ void menu(ensemble_t* liste){
       ajout_fiche(liste);
     }else if(rep==5){
       supprimer_maillon(liste);
-    }else if(rep == 6){
+    }else if (rep==6){
+      select_fiches(liste);
+    }else if(rep == 7){
       printf("Merci d'avoir participé !\n");
       printf("Sauvegarde en cours !\n");
       ecriture_fichier(liste);
@@ -197,6 +200,16 @@ void ajout_fiche(ensemble_t* liste){
     int age,jedi,pos;
     char planete[40];
     char nom[100];
+    int nbElements = 0;
+    maillon_t* temporaire =  liste->premierElement;
+    while(temporaire->vdd != NULL){
+      temporaire = temporaire->vdd;
+      nbElements = nbElements + 1;
+    }
+    //Pas plus de 100 fiches
+    if(nbElements >=100){
+      printf("The force isn't with you, you can't add more people !\n Delete it first");
+    }else{
     printf("Rentrez son age :\n");
     scanf("%d",&age);
     printf("Rentrez son nom :\n");
@@ -220,6 +233,7 @@ void ajout_fiche(ensemble_t* liste){
     affichage_liste(liste);
     scanf("%d",&pos);
     ajouter_nieme_maillon_a_la_liste(liste,pos,m);
+    }
 }
 void attribution_id(ensemble_t* liste,maillon_t* m){
   maillon_t* temporaire = liste->premierElement;
@@ -562,4 +576,68 @@ void recherche_affichage(ensemble_t* liste)
 
     }
 
+}
+void select_fiches(ensemble_t* liste){
+  maillon_t* temporaire = liste->premierElement;
+  int nbElements = 0;
+  int* idElements;
+  int selection = 1;
+  int i=0;
+  int parcoursElements = 0;
+  while(temporaire != NULL){
+    nbElements = nbElements +1;
+    temporaire = temporaire->vdd;
+  }
+  idElements = (int*)malloc(sizeof(int));
+  affichage_liste(liste);
+  printf("Veuillez rentrer le numéro des fiches sélectionnées \n");
+  while(selection != 0 && parcoursElements < nbElements){
+    printf("Rentrer le numéro de la fiche ? \n");
+    scanf("%d",&selection);
+    idElements[parcoursElements] = selection;
+    printf("Voulez vous selectionner d'autres fiches ? (1=Oui) (O = Non) \n");
+    scanf("%d",&selection);
+    parcoursElements = parcoursElements + 1;
+  }
+  printf("Vous avez selectionner les fiches suivantes : \n");
+  for(i=0;i<nbElements;i++){
+    printf(" %d  ",idElements[i]);
+  }
+  printf("\n Que voulez vous faire ? \n");
+  printf("1 - Voir le détail des fiches selectionnées \n");
+  printf("2 - Supprimer les fiches selectionnées \n");
+  scanf("%d",&selection);
+  if(selection == 2){
+    supprimer_maillon_tableau_id(liste,idElements,nbElements);
+  }else{
+    affichage_maillons_par_id(liste,idElements,nbElements);
+  }
+}
+void supprimer_maillon_tableau_id(ensemble_t* liste,int* id,int nbElements){
+  maillon_t* temporaire = liste->premierElement;
+  int i;
+  while(temporaire != NULL){
+    for(i=0;i<nbElements;i++){
+      if(temporaire->identification == id[i]){
+        supprimer_maillon_par_id(liste,temporaire);
+        i = nbElements;
+      }
+    }
+    temporaire = temporaire->vdd;
+  }
+  printf("Voici la nouvelle liste : \n");
+  affichage_liste(liste);
+}
+void affichage_maillons_par_id(ensemble_t* liste, int* id,int nbElements){
+  maillon_t* temporaire = liste->premierElement;
+  int i;
+  while(temporaire != NULL){
+    for(i=0;i<nbElements;i++){
+      if(temporaire->identification == id[i]){
+        affichage_maillon(temporaire);
+        i = nbElements;
+      }
+    }
+    temporaire = temporaire->vdd;
+  }
 }
