@@ -19,7 +19,6 @@ ensemble_t* lecture_collection(){
   fp = fopen("ident.txt", "r+");
   ensemble_t* maListe = creer_liste_null();
   maillon_t* temporaire = creer_maillon(1);
-  int caractereActuel = 0;
   int compteurVirgule = 0;
   char tempo[100]= {0};
   char prevChar=' ';
@@ -41,7 +40,7 @@ ensemble_t* lecture_collection(){
       }
       else if(ch == '\n'){
           compteurVirgule = 0;
-          char identific[10] ={0};
+          char identific[100] ={0};
           strncpy(identific, tempo,indiceTempo);
           identific[indiceTempo] = '\0';
           memset(tempo, 0, 100);
@@ -78,13 +77,12 @@ ensemble_t* lecture_collection(){
     //        printf("Passage a 1 de la virgule  : %d \n",temporaire->pass->jedi);
         }
         if(compteurVirgule == 2){
-
           temporaire->nom = (char*)malloc(sizeof(indiceTempo));
           strncpy(temporaire->nom, tempo,indiceTempo);
           temporaire->nom[indiceTempo] = '\0';
           memset(tempo, 0, 100);
           indiceTempo=0;
-  //        printf("Passage a 2 de la virgule : %s \n",temporaire->nom);
+        //  printf("Passage a 2 de la virgule : %s \n",temporaire->nom);
 
         }
         if(compteurVirgule == 3){
@@ -112,8 +110,9 @@ ensemble_t* lecture_collection(){
   return maListe;
 }
 void copier_maillon(maillon_t* addToList,maillon_t* temporaire){
-  size_t destination_size = sizeof(temporaire->nom);
+  size_t destination_size = strlen(temporaire->nom) +1;
   addToList->nom = (char*)malloc(sizeof(destination_size));
+//  printf("DESTINATION : %zu",destination_size);
   strncpy(addToList->nom,temporaire->nom, destination_size);
   addToList->nom[destination_size - 1] = '\0';
   addToList->age = temporaire->age;
