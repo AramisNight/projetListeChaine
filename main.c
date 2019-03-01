@@ -9,6 +9,8 @@ int main()
 {
   ensemble_t* liste = lecture_collection();
   affichage_liste(liste);
+  printf("-------\n");
+  affichage_maillon(liste->premierElement);
   ecriture_fichier(liste);
   return EXIT_SUCCESS;
 
@@ -268,11 +270,11 @@ void ecriture_fichier(ensemble_t* m)
     maillon_t* temporaire = m->premierElement;
 
     FILE* fichier = NULL;
-    fichier = fopen("ident.txt","rw+");
+    fichier = fopen("ident2.txt","w+");
 
     if(fichier!=NULL)
     {
-        while(temporaire->vdd !=NULL)
+        while(temporaire !=NULL)
             {
                 if(temporaire->pass->jedi == 1){
                   fprintf(fichier,"%s,o,%s,%d,%d\n",temporaire->pass->planete, temporaire->nom, temporaire->age, temporaire->identification);
