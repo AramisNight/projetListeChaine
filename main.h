@@ -26,6 +26,7 @@ typedef struct ensemble_s
 }ensemble_t;
 
 
+void menu(ensemble_t* liste);
 
 ensemble_t* creer_liste(maillon_t* m);
 ensemble_t* creer_liste_null();

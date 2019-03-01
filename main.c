@@ -8,12 +8,30 @@
 int main()
 {
   ensemble_t* liste = lecture_collection();
-  affichage_liste(liste);
-  printf("-------\n");
-  affichage_maillon(liste->premierElement);
-  ecriture_fichier(liste);
+  menu(liste);
   return EXIT_SUCCESS;
 
+}
+void menu(ensemble_t* liste){
+  int a = 0;
+  int rep = 0;
+  while(a != -1){
+    printf("Que voulez vous faire ? \n");
+    printf("1 - Voir la liste \n");
+    printf("2 - Voir un maillon\n");
+    printf("3 - Quitter \n");
+    scanf("%d",&rep);
+    if(rep == 1){
+      affichage_liste(liste);
+    }else if(rep == 2){
+      affichage_maillon(liste->premierElement);
+    }else if(rep == 3){
+      printf("Merci d'avoir participé !\n");
+      printf("Sauvegarde en cours !\n");
+      ecriture_fichier(liste);
+      a= -1;
+    }
+  }
 }
 ensemble_t* lecture_collection(){
   int ch;
